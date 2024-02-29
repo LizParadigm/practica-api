@@ -5,9 +5,12 @@
 }
 
 h1 {
-    text-align: center;
+	text-align: center;
 }
 
+div {
+	text-align: center;
+}
 main {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
