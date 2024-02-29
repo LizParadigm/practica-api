@@ -43,34 +43,18 @@ function getClassJQuery(done) {
 }
 
 /* filto de uso local (si los datos o la info esta en almacenamiento local) o uso de un fetch (en caso de que no lo este, lo pide y lo almacena). */
-function getClassLocal() {
-    const localData = localStorage.getItem('apiData');
-
-    if (localData) {
-        const data = JSON.parse(localData);
-        renderData(data);
-    } else {
-        getClassFetch(data => {
-            localStorage.setItem('apiData', JSON.stringify(data));
-            renderData(data);
-        });
-    }
-}
-
-/* continuacion de uso local y front. */
-function renderData(data) {
-    const main = document.querySelector("main");
-    main.innerHTML = '';
-
-    data.results.forEach(clase => {
-        const article = document.createRange().createContextualFragment(`
-            <article>
-                <div class="image-container"> <img src="https://th.bing.com/th/id/OIP.p6l6jmdmcdCoGzySFPaKkgHaEN?pid=ImgDet&w=194&h=109.91966173361521&c=7" alt="clase"> </div>
-                <h2>${clase.name}</h2>
-            </article>
-        `);
-        main.append(article);
-    });
+function getClassJQueryLocal(done){
+	$.ajax({
+		url: "https://www.dnd5eapi.co/api/classes",
+		method: "GET",
+		dataType: "json",
+		success: function(data) {
+			done(data);
+		},
+		error: function(xhr, status, error) {
+			console.error("Error al realizar la solicitud:", error);
+		}
+	});
 }
 
 /* funcion de filtro y front (creo que lo podria optimizar mejor de otra forma. NOTA: investigar que tan posible es mejorar esta funcion). */
@@ -121,6 +105,16 @@ function getClass(jquery, tipoGet){
 			});
 			break;
 		case 4:
-			getClassLocal();
+			getClassJQueryLocal(data => {
+				data.results.forEach(clase => {
+                                        const article = document.createRange().createContextualFragment(`
+                                        <article>
+                                                <div class="image-container"> <img src="https://th.bing.com/th/id/OIP.p6l6jmdmcdCoGzySFPaKkgHaEN?pid=ImgDet&w=194&h=109.91966173361521&c=7" alt="clase"> </div>
+                                                <h2>${clase.name}</h2>
+                                        </article>
+                                                `);
+                                        main.append(article);
+                                });
+                        });
 	}
 }
