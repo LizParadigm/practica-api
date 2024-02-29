@@ -1,6 +1,5 @@
-/* uso de fetch. */
 function getClassFetch(done) {
-    const results = fetch("https://www.dnd5eapi.co/api/classes");
+    const results = fetch('https://spapi.dev/api/episodes');
 
     results.then(response => response.json())
         .then(data => {
@@ -8,7 +7,6 @@ function getClassFetch(done) {
         });
 }
 
-/* uso de request. */
 function getClassRequest(done) {
     const xhr = new XMLHttpRequest();
 
@@ -23,14 +21,13 @@ function getClassRequest(done) {
         }
     };
 
-    xhr.open('GET', 'https://www.dnd5eapi.co/api/classes');
+    xhr.open('GET', 'https://spapi.dev/api/characters/');
     xhr.send();
 }
 
-/* continuacion del uso de CDN. */
 function getClassJQuery(done) {
     $.ajax({
-        url: "https://www.dnd5eapi.co/api/classes",
+        url:'https://spapi.dev/api/families',
         method: "GET",
         dataType: "json",
         success: function(data) {
@@ -42,10 +39,9 @@ function getClassJQuery(done) {
     });
 }
 
-/* filto de uso local (si los datos o la info esta en almacenamiento local) o uso de un fetch (en caso de que no lo este, lo pide y lo almacena). */
 function getClassJQueryLocal(done){
 	$.ajax({
-		url: "https://www.dnd5eapi.co/api/classes",
+		url: 'https://spapi.dev/api/locations',
 		method: "GET",
 		dataType: "json",
 		success: function(data) {
@@ -57,21 +53,24 @@ function getClassJQueryLocal(done){
 	});
 }
 
-/* funcion de filtro y front (creo que lo podria optimizar mejor de otra forma. NOTA: investigar que tan posible es mejorar esta funcion). */
 function getClass(jquery, tipoGet){
 	const main = document.querySelector("main");
-	main.innerHTML = ''; /* uso de front. (tal vez esto no este bien o no sea a lo que se refiere implementar un front al consumir un api. investigar que pex con eso). */
+	main.innerHTML = '';
 
 	switch(tipoGet){
 		case 1:
 			getClassFetch(data => {
-				data.results.forEach(clase => {
-					const article = document.createRange().createContextualFragment(`
-					<article>
-						<div class="image-container"> <img src="https://th.bing.com/th/id/OIP.p6l6jmdmcdCoGzySFPaKkgHaEN?pid=ImgDet&w=194&h=109.91966173361521&c=7" alt="clase"> </div>
-						<h2>${clase.name}</h2>
-					</article>
-						`);
+				data.data.forEach(episodes => {
+				const article = document.createRange().createContextualFragment(`
+				<article>
+					<div class="image-container">
+						<img src="${episodes.thumbnail_url}" alt="episodes">
+					</div>
+					<h2>${episodes.name}</h2>
+					<h3>Temporada: ${episodes.season}</h3>
+					<h4>Episodio: ${episodes.episode}</h4>
+				</article>
+					`);
 					main.append(article);
 				});
 			});
@@ -79,13 +78,19 @@ function getClass(jquery, tipoGet){
 
 		case 2:
 			getClassRequest(data => {
-                                data.results.forEach(clase => {
-                                        const article = document.createRange().createContextualFragment(`
-			                <article>
-                                        	<div class="image-container"> <img src="https://th.bing.com/th/id/OIP.p6l6jmdmcdCoGzySFPaKkgHaEN?pid=ImgDet&w=194&h=109.91966173361521&c=7" alt="clase"> </div>
-                                        	<h2>${clase.name}</h2>
-                                        </article>
-                                                `);
+                                data.data.forEach(characters => {
+                                const article = document.createRange().createContextualFragment(`
+                                <article>
+                                        <div class="image-container">
+                                                <img src="https://www.ecured.cu/images/1/17/South.jpg" alt="episodes">
+                                        </div>
+                                        <h2>nombre: ${characters.name}</h2>
+                                        <h3>sexo: ${characters.sex}</h3>
+                                        <h4>color de cabello: ${characters.hair_color}</h4>
+					<h5>ocupacion: ${characters.occupation}</h5>
+					<h6>religion: ${characters.religion}</h6>
+                                </article>
+                                        `);
                                         main.append(article);
                                 });
                         });
@@ -93,28 +98,35 @@ function getClass(jquery, tipoGet){
 			break;
 		case 3:
 			getClassJQuery(data => {
-				data.results.forEach(clase => {
-					const article = document.createRange().createContextualFragment(`
-					<article>
-						<div class="image-container"> <img src="https://th.bing.com/th/id/OIP.p6l6jmdmcdCoGzySFPaKkgHaEN?pid=ImgDet&w=194&h=109.91966173361521&c=7" alt="clase"> </div>
-						<h2>${clase.name}</h2>
-					</article>
-						`);
-					main.append(article);
-				});
+				data.data.forEach(families => {
+                                const article = document.createRange().createContextualFragment(`
+                                <article>
+                                        <div class="imagxde-container">
+                                                <img src= "https://th.bing.com/th/id/OIP.0OYFPOj6ePF3wuEU9suDAAHaEt?pid=ImgDet&w=194&h=112.14345991561181&c=7" alt="families">
+                                        </div>
+                                        <h2>${families.name}</h2>
+                                </article>
+                                        `);
+                                        main.append(article);
+                                });
 			});
+
 			break;
 		case 4:
 			getClassJQueryLocal(data => {
-				data.results.forEach(clase => {
-                                        const article = document.createRange().createContextualFragment(`
-                                        <article>
-                                                <div class="image-container"> <img src="https://th.bing.com/th/id/OIP.p6l6jmdmcdCoGzySFPaKkgHaEN?pid=ImgDet&w=194&h=109.91966173361521&c=7" alt="clase"> </div>
-                                                <h2>${clase.name}</h2>
-                                        </article>
-                                                `);
+				data.data.forEach(locations => {
+                                const article = document.createRange().createContextualFragment(`
+                                <article>
+                                        <div class="image-container">
+                                                <img src="https://th.bing.com/th/id/R.3312dd66badb840b32b07e6e1a384b89?rik=IRGmWqRKFo091Q&riu=http%3a%2f%2f4.bp.blogspot.com%2f_cTvmFDZs-Rs%2fSa1_V6CpsyI%2fAAAAAAAACGQ%2fDKdTTdE5BEc%2fs400%2fMASA.JPG&ehk=KHjw6sDSB1K44jorSSilESfnoHNq9XqV6kXpbK7FsHc%3d&risl=&pid=ImgRaw&r=0" alt="episodes">
+                                        </div>
+                                        <h2>${locations.name}</h2>
+                                </article>
+                                        `);
                                         main.append(article);
                                 });
                         });
+
+			break;
 	}
 }
